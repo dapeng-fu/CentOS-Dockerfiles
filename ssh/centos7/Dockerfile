@@ -7,8 +7,16 @@
 FROM centos:centos7
 MAINTAINER The CentOS Project <cloud-ops@centos.org>
 
+# add nginx repository
+ADD ./nginx.repo /etc/yum.repos.d/nginx.repo
+RUN chmod 644 /etc/yum.repos.d/nginx.repo
 RUN yum -y update; yum clean all
-RUN yum -y install openssh-server openssh-clients passwd; yum clean all
+RUN yum -y install openssh-server openssh-clients passwd net-tools; yum clean all
+RUN yum -y install nginx wget curl; yum clean all
+
+# import zsh
+sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
+
 ADD ./id_rsa.pub /id_rsa.pub
 RUN mkdir -p /root/.ssh
 RUN cat /id_rsa.pub > /root/.ssh/authorized_keys
